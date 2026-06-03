@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IFORS 2026 — Conference Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --surface: #ffffff;
+    --border: #ddd8d0;
+    --border-soft: #ede9e3;
+    --text: #1a1714;
+    --text-muted: #7a7269;
+    --accent: #2a4a7f;
+    --accent-light: #e8eef7;
+    --gold: #b8860b;
+    --gold-light: #fdf6e3;
+    --green: #2d6a4f;
+    --green-light: #e8f4ee;
+    --red: #8b2635;
+    --red-light: #faeaec;
+    --purple: #5c3d7a;
+    --purple-light: #f0eaf7;
+    --orange: #b85c00;
+    --orange-light: #fef3e8;
+    --gray: #5a5550;
+    --gray-light: #f0eeeb;
+
+    /* Grid: each slot = 15 min. We show 30-min bands. */
+    --slot-h: 28px;      /* height of one 15-min unit */
+    --half-h: calc(var(--slot-h) * 2); /* 30 min band */
+    --col-time: 68px;
+    --col-day: 1fr;
+    --radius: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 24px 80px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  header p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .schedule-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  }
+
+  /* ── HEADER ROW ── */
+  .sched-header {
+    display: grid;
+    grid-template-columns: var(--col-time) repeat(5, var(--col-day));
+    background: var(--accent);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .sched-header .day-label {
+    padding: 14px 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border-left: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .sched-header .day-label:first-child {
+    border-left: none;
+  }
+
+  /* ── BODY ── */
+  .sched-body {
+    position: relative;
+  }
+
+  /* ── HOUR GROUP ── */
+  .hour-group {
+    display: grid;
+    grid-template-columns: var(--col-time) repeat(5, var(--col-day));
+    border-top: 2px solid var(--border);
+  }
+
+  .hour-group:first-child {
+    border-top: none;
+  }
+
+  /* Hour label column spans all 4 15-min rows */
+  .hour-label {
+    grid-row: 1 / 5;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--accent);
+    border-right: 2px solid var(--border);
+    background: var(--accent-light);
+    user-select: none;
+  }
+
+  .hour-label .hh { font-size: 1rem; font-weight: 600; }
+  .hour-label .mm { font-size: 0.65rem; color: var(--text-muted); margin-top: 1px; }
+
+  /* ── SLOT ROWS (15-min units inside each hour) ── */
+  .slot-row {
+    display: contents;
+  }
+
+  /* Each cell in the grid body */
+  .slot-cell {
+    height: var(--slot-h);
+    border-left: 1px solid var(--border-soft);
+    position: relative;
+  }
+
+  /* The subtle 15-min subdivision line (at the 2nd row = :15 mark) */
+  /* Each hour has rows at :00, :15, :30, :45 */
+  /* We show a slightly stronger line at :30 (row index 2) */
+  .slot-row:nth-child(3) .slot-cell {
+    border-top: 1px dashed #ccc8c0;
+  }
+
+  /* ── ACTIVITY BLOCKS ── */
+  /* Blocks are positioned absolutely inside the hour-group, spanning the right columns and rows */
+  /* We use a wrapper that is relative */
+
+  .hour-group-inner {
+    display: grid;
+    grid-template-columns: var(--col-time) repeat(5, var(--col-day));
+    grid-template-rows: repeat(4, var(--slot-h));
+    position: relative;
+    min-height: calc(var(--slot-h) * 4);
+  }
+
+  .bg-stripe {
+    background: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent calc(var(--slot-h) - 1px),
+      var(--border-soft) calc(var(--slot-h) - 1px),
+      var(--border-soft) var(--slot-h)
+    );
+  }
+
+  .day-col-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
+
+  .event-block {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    border-radius: var(--radius);
+    padding: 5px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: transform 0.1s, box-shadow 0.1s;
+    cursor: default;
+  }
+
+  .event-block:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    z-index: 5;
+  }
+
+  .event-block .time-tag {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    opacity: 0.65;
+    margin-bottom: 2px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Color variants */
+  .ev-plenary   { background: #b8e8cc; border-color: #4daa78; color: #1a5c38; }
+  .ev-keynote   { background: #f5c4c8; border-color: #d4607a; color: #7a1828; }
+  .ev-session   { background: #c8daf5; border-color: #7aaae0; color: #1a3a6e; }
+  .ev-break     { background: #e8e6e3; border-color: #bbb8b2; color: #6a6460; }
+  .ev-coffee    { background: #e8e6e3; border-color: #bbb8b2; color: #6a6460; }
+  .ev-ceremony  { background: #d8c4f0; border-color: #9060c8; color: #3e1a6e; }
+  .ev-special   { background: #d8c4f0; border-color: #9060c8; color: #3e1a6e; }
+  .ev-social    { background: #fad4a0; border-color: #d4843a; color: #7a3c00; }
+
+  .time-axis {
+    background: var(--accent-light);
+    border-right: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .half-tick {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 14px;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>IFORS 2026 — Conference Program</h1>
+  <p>Each band = 30 min · dashed line marks the :15/:45 subdivision</p>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:#b8e8cc;border:1px solid #4daa78"></span>Plenary</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#f5c4c8;border:1px solid #d4607a"></span>Keynote</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#c8daf5;border:1px solid #7aaae0"></span>Sessions</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#e8e6e3;border:1px solid #bbb8b2"></span>Break</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#d8c4f0;border:1px solid #9060c8"></span>Special event</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#fad4a0;border:1px solid #d4843a"></span>Social / Party</div>
+</div>
+
+<div class="schedule-wrapper">
+  <div class="sched-header">
+    <div class="day-label" style="font-size:0.7rem;color:rgba(255,255,255,0.5)">Time</div>
+    <div class="day-label">Monday</div>
+    <div class="day-label">Tuesday</div>
+    <div class="day-label">Wednesday</div>
+    <div class="day-label">Thursday</div>
+    <div class="day-label">Friday</div>
+  </div>
+
+  <div id="sched-body"></div>
+</div>
+
+<footer>IFORS 2026</footer>
+
+<script>
+/*
+  DATA MODEL
+  ----------
+  Each event: { day: 0-4 (Mon-Fri), startMin: minutes from 8:00, durationMin, label, type }
+  We render from 8:00 to 24:00 (in 30-min bands = 32 bands total, but we stop at last event).
+  
+  Columns: day 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri
+  
+  From the xlsx data, mapping merged cells to actual times:
+  Each xlsx row corresponds to 15 minutes starting from 8:00 at row 3.
+  Row 3 = 8:00, Row 4 = 8:15, Row 5 = 8:30, Row 6 = 8:45
+  Row 7 = 9:00, Row 8 = 9:15, Row 9 = 9:30, Row 10 = 9:45
+  Row 11 = 10:00, Row 12 = 10:15, Row 13 = 10:30, Row 14 = 10:45
+  Row 15 = 11:00 ... etc.
+  Formula: time = 8:00 + (row - 3) * 15min
+*/
+
+function rowToMin(row) {
+  return (row - 3) * 15; // minutes from 8:00
+}
+
+// Events derived from openpyxl data (merged cell ranges → day, startRow, endRow)
+// Cols: D=Mon(0), F=Tue(1), H=Wed(2), J=Thu(3), L=Fri(4)
+
+const events = [
+  // Monday
+  { day: 0, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'Opening ceremony', type: 'ev-ceremony', id: 'MA' },
+  { day: 0, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'MB' },
+  { day: 0, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 0, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'MC' },
+  { day: 0, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
+  { day: 0, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'MD' },
+  { day: 0, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'ME' },
+  { day: 0, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 0, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions', type: 'ev-session', id: 'MF' },
+
+  // Tuesday
+  { day: 1, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'IFORS Hall of Fame ceremony', type: 'ev-ceremony', id: 'TA' },
+  { day: 1, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'TB' },
+  { day: 1, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 1, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'TC' },
+  { day: 1, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
+  { day: 1, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'TD' },
+  { day: 1, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'TE' },
+  { day: 1, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 1, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions, Keynote', type: 'ev-session', id: 'TF' },
+  { day: 1, startMin: rowToMin(43), durationMin: (46-43+1)*15, label: 'GLOW: Global Leadership in OR for Women – Reception', type: 'ev-ceremony' },
+
+  // Wednesday
+  { day: 2, startMin: rowToMin(5), durationMin: (10-5+1)*15, label: 'Sessions', type: 'ev-session', id: 'WA' },
+  { day: 2, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 2, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions', type: 'ev-session', id: 'WB' },
+  { day: 2, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
+  { day: 2, startMin: rowToMin(23), durationMin: (46-23+1)*15, label: 'Excursion', type: 'ev-social' },
+
+  // Thursday
+  { day: 3, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'IFORS Awards / Fellows / Best Papers', type: 'ev-ceremony', id: 'HA' },
+  { day: 3, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'HB' },
+  { day: 3, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 3, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'HC' },
+  { day: 3, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
+  { day: 3, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'HD' },
+  { day: 3, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'HE' },
+  { day: 3, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
+  { day: 3, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions', type: 'ev-session', id: 'HF' },
+  // Banquet starts at 18:00 = (18-8)*60 = 600 min, until 24:00 = 360 min duration
+  { day: 3, startMin: 630, durationMin: 90, label: 'Banquet (ticket required)\n18:30–24:00', type: 'ev-social', hideTag: true },
+
+  // Friday
+  { day: 4, startMin: rowToMin(7), durationMin: (12-7+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'FA' },   // L7:L12
+  { day: 4, startMin: rowToMin(13), durationMin: (14-13+1)*15, label: 'Coffee break', type: 'ev-coffee' },         // L13:L14
+  { day: 4, startMin: rowToMin(15), durationMin: (20-15+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'FB' }, // L15:L20
+  { day: 4, startMin: rowToMin(21), durationMin: (24-21+1)*15, label: 'Break', type: 'ev-break' },                 // L21:L24
+  { day: 4, startMin: rowToMin(25), durationMin: (28-25+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'FC' },        // L25:L28
+  { day: 4, startMin: rowToMin(29), durationMin: (31-29+1)*15, label: 'Closing ceremony', type: 'ev-ceremony', id: 'FD' },   // L29:L31
+  { day: 4, startMin: rowToMin(32), durationMin: (46-32+1)*15, label: 'Farewell party', type: 'ev-social' },       // L32:L46
+];
+
+// Build the grid
+// Time range: 8:00 (0 min) to 24:00 (960 min)
+// We display in 30-min bands
+const START_HOUR = 8;
+const END_MIN = 960; // 24:00 = 16h * 60 = 960
+const BAND_MIN = 30;
+const SLOT_MIN = 15; // each slot = 15 min
+
+// Only render up to the last event's end
+const lastEventEnd = Math.max(...events.map(e => e.startMin + e.durationMin));
+const endMin = Math.ceil(lastEventEnd / BAND_MIN) * BAND_MIN;
+
+function minToTimeStr(min) {
+  const totalMin = START_HOUR * 60 + min;
+  const h = Math.floor(totalMin / 60) % 24;
+  const m = totalMin % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+const body = document.getElementById('sched-body');
+
+// Build band-indexed event lookup: bandStart -> [events that start at or within this band per day]
+// We'll render each event as a CSS absolute-positioned block within its container
+
+// Total slots from 0 to endMin, step 15
+const totalSlots = endMin / SLOT_MIN;
+const totalBands = endMin / BAND_MIN;
+
+// Column positions for CSS grid (day 0..4 = column 2..6)
+const dayToGridCol = [2, 3, 4, 5, 6];
+const colPercent = [
+  'calc(0/5 * 100%)', 
+  'calc(1/5 * 100%)',
+  'calc(2/5 * 100%)',
+  'calc(3/5 * 100%)',
+  'calc(4/5 * 100%)',
+];
+
+// For the inner grid approach, we lay out the ENTIRE schedule as one big
+// relative container with the time axis on the left.
+
+const SLOT_H = 28; // px per 15-min slot
+const COL_TIME_W = 68; // px
+
+// Build a big wrapper div
+const wrapper = document.createElement('div');
+wrapper.style.cssText = `
+  position: relative;
+  display: grid;
+  grid-template-columns: ${COL_TIME_W}px repeat(5, 1fr);
+  grid-template-rows: repeat(${totalSlots}, ${SLOT_H}px);
+`;
+
+// Render time axis (left column) — one cell per BAND (30 min = 2 slots)
+// We'll span 2 rows per band label
+for (let band = 0; band < totalBands; band++) {
+  const slotIdx = band * 2; // slot index (0-based)
+  const min = band * BAND_MIN;
+  const timeStr = minToTimeStr(min);
+  const halfStr = minToTimeStr(min + 15);
+
+  const cell = document.createElement('div');
+  cell.style.cssText = `
+    grid-column: 1;
+    grid-row: ${slotIdx + 1} / span 2;
+    background: #e8eef7;
+    border-right: 2px solid #ddd8d0;
+    border-bottom: ${band < totalBands - 1 ? '1px solid #ddd8d0' : 'none'};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5px;
+    z-index: 2;
+  `;
+
+  const hh = document.createElement('span');
+  hh.textContent = timeStr;
+  hh.style.cssText = `
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #2a4a7f;
+    line-height: 1;
+  `;
+  cell.appendChild(hh);
+
+  const mm = document.createElement('span');
+  mm.textContent = halfStr;
+  mm.style.cssText = `
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    color: #9a9088;
+    margin-top: 10px;
+  `;
+  cell.appendChild(mm);
+
+  wrapper.appendChild(cell);
+}
+
+// Render background cells for each day column (zebra + grid lines)
+for (let day = 0; day < 5; day++) {
+  for (let slot = 0; slot < totalSlots; slot++) {
+    const band = Math.floor(slot / 2);
+    const isHalf = slot % 2 === 1; // :15 or :45 position
+    const isOddBand = band % 2 === 1;
+
+    const bg = document.createElement('div');
+    bg.style.cssText = `
+      grid-column: ${day + 2};
+      grid-row: ${slot + 1};
+      background: ${isOddBand ? '#fafaf8' : '#ffffff'};
+      border-left: 1px solid ${day === 0 ? '#ddd8d0' : '#ece8e2'};
+      border-bottom: ${isHalf 
+        ? '1px dashed #d8d4cc'  /* :15/:45 subdivision */
+        : (slot === totalSlots - 1 ? 'none' : '1px solid #ddd8d0') /* :30 boundary */
+      };
+    `;
+    wrapper.appendChild(bg);
+  }
+}
+
+// Render events
+for (const ev of events) {
+  const startSlot = ev.startMin / SLOT_MIN; // slot index (0-based)
+  const spanSlots = ev.durationMin / SLOT_MIN;
+  const col = ev.day + 2;
+
+  const block = document.createElement('div');
+  block.className = `event-block ${ev.type}`;
+  block.style.cssText = `
+    grid-column: ${col};
+    grid-row: ${startSlot + 1} / span ${spanSlots};
+    position: relative;
+    left: 3px;
+    right: 3px;
+    margin: 2px 3px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 0.71rem;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: transform 0.12s, box-shadow 0.12s;
+    cursor: default;
+    box-sizing: border-box;
+  `;
+
+  // Time tag
+  const tag = document.createElement('span');
+  const endTime = minToTimeStr(ev.startMin + ev.durationMin);
+  tag.textContent = `${minToTimeStr(ev.startMin)} – ${endTime}`;
+  tag.style.cssText = `
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    opacity: 0.65;
+    margin-bottom: 2px;
+    letter-spacing: 0.3px;
+    display: block;
+  `;
+
+  const label = document.createElement('span');
+  label.textContent = ev.label;
+
+  if (ev.id) {
+      const idTag = document.createElement('span');
+      idTag.textContent = ev.id;
+      idTag.style.cssText = `
+        display: block;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 600;
+        opacity: 0.8;
+        margin-bottom: 2px;
+        letter-spacing: 0.5px;
+      `;
+      block.appendChild(idTag);
+    }
+    if (ev.durationMin >= 30 && !ev.hideTag) {
+      block.appendChild(tag);
+    }
+    if (ev.label.includes('\n')) {
+      const parts = ev.label.split('\n');
+      label.textContent = parts[0];
+      const sub = document.createElement('span');
+      sub.textContent = parts[1];
+      sub.style.cssText = `
+        display: block;
+        font-family: 'DM Mono', monospace;
+        font-size: 0.6rem;
+        opacity: 0.75;
+        margin-top: 2px;
+        letter-spacing: 0.3px;
+      `;
+      block.appendChild(sub);   // ← hora primero
+      block.appendChild(label); // ← nombre después
+    } else {
+      block.appendChild(label);
+    }
+
+  block.addEventListener('mouseenter', () => {
+    block.style.transform = 'translateY(-1px)';
+    block.style.boxShadow = '0 4px 12px rgba(0,0,0,0.13)';
+    block.style.zIndex = '10';
+  });
+  block.addEventListener('mouseleave', () => {
+    block.style.transform = '';
+    block.style.boxShadow = '';
+    block.style.zIndex = '3';
+  });
+
+  wrapper.appendChild(block);
+}
+
+body.appendChild(wrapper);
+</script>
+</body>
+</html>
