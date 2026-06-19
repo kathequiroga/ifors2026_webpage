@@ -297,7 +297,7 @@
 
 <header>
   <h1>IFORS 2026 — Conference Program</h1>
-  <p>Each band = 30 min · dashed line marks the :15/:45 subdivision</p>
+  <p style="margin-top: 6px; font-size: 0.8rem; color: #7a7269;">Click on any event to view its details</p>
 </header>
 
 <div class="legend">
@@ -371,56 +371,55 @@ function rowToMin(row) {
 
 const events = [
   // Monday
-  { day: 0, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'Opening ceremony', type: 'ev-ceremony', id: 'MA' },
-  { day: 0, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'MB' },
-  { day: 0, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 0, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'MC' },
-  { day: 0, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
-  { day: 0, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'MD' },
-  { day: 0, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'ME' },
-  { day: 0, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 0, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions', type: 'ev-session', id: 'MF' },
+  { day: 0, startMin: rowToMin(4),  durationMin: (6-4+1)*15,   label: 'Opening ceremony',                                   type: 'ev-ceremony', id: 'MA', url: 'https://www.euro-online.org/conferences/program/#timeslot/1' },
+  { day: 0, startMin: rowToMin(7),  durationMin: (10-7+1)*15,  label: 'Plenary talk',                                        type: 'ev-plenary',  id: 'MB', url: 'https://www.euro-online.org/conferences/program/#timeslot/2' },
+  { day: 0, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 0, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'MC', url: 'https://www.euro-online.org/conferences/program/#timeslot/3' },
+  { day: 0, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break',                                               type: 'ev-break' },
+  { day: 0, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks',                                       type: 'ev-keynote',  id: 'MD', url: 'https://www.euro-online.org/conferences/program/#timeslot/4' },
+  { day: 0, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'ME', url: 'https://www.euro-online.org/conferences/program/#timeslot/5' },
+  { day: 0, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 0, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions',                                            type: 'ev-session',  id: 'MF', url: 'https://www.euro-online.org/conferences/program/#timeslot/6' },
 
   // Tuesday
-  { day: 1, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'IFORS Hall of Fame ceremony', type: 'ev-ceremony', id: 'TA' },
-  { day: 1, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'TB' },
-  { day: 1, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 1, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'TC' },
-  { day: 1, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
-  { day: 1, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'TD' },
-  { day: 1, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'TE' },
-  { day: 1, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 1, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions, Keynote', type: 'ev-session', id: 'TF' },
-  { day: 1, startMin: rowToMin(43), durationMin: (46-43+1)*15, label: 'GLOW: Global Leadership in OR for Women – Reception', type: 'ev-ceremony' },
+  { day: 1, startMin: rowToMin(4),  durationMin: (6-4+1)*15,   label: 'IFORS Hall of Fame ceremony',                         type: 'ev-ceremony', id: 'TA', url: 'https://www.euro-online.org/conferences/program/#timeslot/7' },
+  { day: 1, startMin: rowToMin(7),  durationMin: (10-7+1)*15,  label: 'Plenary talk',                                        type: 'ev-plenary',  id: 'TB', url: 'https://www.euro-online.org/conferences/program/#timeslot/8' },
+  { day: 1, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 1, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'TC', url: 'https://www.euro-online.org/conferences/program/#timeslot/9' },
+  { day: 1, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break',                                               type: 'ev-break' },
+  { day: 1, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks',                                       type: 'ev-keynote',  id: 'TD', url: 'https://www.euro-online.org/conferences/program/#timeslot/10' },
+  { day: 1, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'TE', url: 'https://www.euro-online.org/conferences/program/#timeslot/11' },
+  { day: 1, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 1, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions, Keynote',                                   type: 'ev-session',  id: 'TF', url: 'https://www.euro-online.org/conferences/program/#timeslot/12' },
+  { day: 1, startMin: rowToMin(43), durationMin: (46-43+1)*15, label: 'GLOW: Global Leadership in OR for Women – Reception', type: 'ev-ceremony',           url: 'https://www.ifors.org/glow-global-leadership-in-or-for-women/'},
 
   // Wednesday
-  { day: 2, startMin: rowToMin(5), durationMin: (10-5+1)*15, label: 'Sessions', type: 'ev-session', id: 'WA' },
-  { day: 2, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 2, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions', type: 'ev-session', id: 'WB' },
-  { day: 2, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
-  { day: 2, startMin: rowToMin(23), durationMin: (46-23+1)*15, label: 'Excursion', type: 'ev-social' },
+  { day: 2, startMin: rowToMin(5),  durationMin: (10-5+1)*15,  label: 'Sessions',                                            type: 'ev-session',  id: 'WA', url: 'https://www.euro-online.org/conferences/program/#timeslot/13' },
+  { day: 2, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 2, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions',                                            type: 'ev-session',  id: 'WB', url: 'https://www.euro-online.org/conferences/program/#timeslot/14' },
+  { day: 2, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break',                                               type: 'ev-break' },
+  { day: 2, startMin: rowToMin(23), durationMin: (46-23+1)*15, label: 'Excursion',                                           type: 'ev-social',             url: 'https://ifors2026.at/side-events/excursion-15-july-2026/' },
 
   // Thursday
-  { day: 3, startMin: rowToMin(4), durationMin: (6-4+1)*15, label: 'IFORS Awards / Fellows / Best Papers', type: 'ev-ceremony', id: 'HA' },
-  { day: 3, startMin: rowToMin(7), durationMin: (10-7+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'HB' },
-  { day: 3, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 3, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'HC' },
-  { day: 3, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break', type: 'ev-break' },
-  { day: 3, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks', type: 'ev-keynote', id: 'HD' },
-  { day: 3, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'HE' },
-  { day: 3, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break', type: 'ev-coffee' },
-  { day: 3, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions', type: 'ev-session', id: 'HF' },
-  // Banquet starts at 18:00 = (18-8)*60 = 600 min, until 24:00 = 360 min duration
-  { day: 3, startMin: 630, durationMin: 90, label: 'Banquet (ticket required)\n18:30–24:00', type: 'ev-social', hideTag: true },
+  { day: 3, startMin: rowToMin(4),  durationMin: (6-4+1)*15,   label: 'IFORS Awards / Fellows / Best Papers',                type: 'ev-ceremony', id: 'HA', url: 'https://www.euro-online.org/conferences/program/#timeslot/15' },
+  { day: 3, startMin: rowToMin(7),  durationMin: (10-7+1)*15,  label: 'Plenary talk',                                        type: 'ev-plenary',  id: 'HB', url: 'https://www.euro-online.org/conferences/program/#timeslot/16' },
+  { day: 3, startMin: rowToMin(11), durationMin: (12-11+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 3, startMin: rowToMin(13), durationMin: (18-13+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'HC', url: 'https://www.euro-online.org/conferences/program/#timeslot/17' },
+  { day: 3, startMin: rowToMin(19), durationMin: (22-19+1)*15, label: 'Break',                                               type: 'ev-break' },
+  { day: 3, startMin: rowToMin(23), durationMin: (26-23+1)*15, label: 'Keynote talks',                                       type: 'ev-keynote',  id: 'HD', url: 'https://www.euro-online.org/conferences/program/#timeslot/18' },
+  { day: 3, startMin: rowToMin(28), durationMin: (33-28+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'HE', url: 'https://www.euro-online.org/conferences/program/#timeslot/19' },
+  { day: 3, startMin: rowToMin(34), durationMin: (35-34+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 3, startMin: rowToMin(36), durationMin: (41-36+1)*15, label: 'Sessions',                                            type: 'ev-session',  id: 'HF', url: 'https://www.euro-online.org/conferences/program/#timeslot/20' },
+  { day: 3, startMin: 630,          durationMin: 90,            label: 'Banquet (ticket required)\n18:30–24:00',              type: 'ev-social',   hideTag: true},
 
   // Friday
-  { day: 4, startMin: rowToMin(7), durationMin: (12-7+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'FA' },   // L7:L12
-  { day: 4, startMin: rowToMin(13), durationMin: (14-13+1)*15, label: 'Coffee break', type: 'ev-coffee' },         // L13:L14
-  { day: 4, startMin: rowToMin(15), durationMin: (20-15+1)*15, label: 'Sessions, Tutorial', type: 'ev-session', id: 'FB' }, // L15:L20
-  { day: 4, startMin: rowToMin(21), durationMin: (24-21+1)*15, label: 'Break', type: 'ev-break' },                 // L21:L24
-  { day: 4, startMin: rowToMin(25), durationMin: (28-25+1)*15, label: 'Plenary talk', type: 'ev-plenary', id: 'FC' },        // L25:L28
-  { day: 4, startMin: rowToMin(29), durationMin: (31-29+1)*15, label: 'Closing ceremony', type: 'ev-ceremony', id: 'FD' },   // L29:L31
-  { day: 4, startMin: rowToMin(32), durationMin: (46-32+1)*15, label: 'Farewell party', type: 'ev-social' },       // L32:L46
+  { day: 4, startMin: rowToMin(7),  durationMin: (12-7+1)*15,  label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'FA', url: 'https://www.euro-online.org/conferences/program/#timeslot/21' },
+  { day: 4, startMin: rowToMin(13), durationMin: (14-13+1)*15, label: 'Coffee break',                                        type: 'ev-coffee' },
+  { day: 4, startMin: rowToMin(15), durationMin: (20-15+1)*15, label: 'Sessions, Tutorial',                                  type: 'ev-session',  id: 'FB', url: 'https://www.euro-online.org/conferences/program/#timeslot/22' },
+  { day: 4, startMin: rowToMin(21), durationMin: (24-21+1)*15, label: 'Break',                                               type: 'ev-break' },
+  { day: 4, startMin: rowToMin(25), durationMin: (28-25+1)*15, label: 'Plenary talk',                                        type: 'ev-plenary',  id: 'FC', url: 'https://www.euro-online.org/conferences/program/#timeslot/23' },
+  { day: 4, startMin: rowToMin(29), durationMin: (31-29+1)*15, label: 'Closing ceremony',                                    type: 'ev-ceremony', id: 'FD', url: 'https://www.euro-online.org/conferences/program/#timeslot/24' },
+  { day: 4, startMin: rowToMin(32), durationMin: (46-32+1)*15, label: 'Farewell party',                                      type: 'ev-social' },
 ];
 
 // Build the grid
@@ -639,7 +638,18 @@ for (const ev of events) {
     block.style.zIndex = '3';
   });
 
-  wrapper.appendChild(block);
+  if (ev.url) {
+    const link = document.createElement('a');
+    link.href = ev.url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.cssText = 'display: contents; text-decoration: none; color: inherit;';
+    block.style.cursor = 'pointer';
+    link.appendChild(block);
+    wrapper.appendChild(link);
+  } else {
+    wrapper.appendChild(block);
+  }
 }
 
 body.appendChild(wrapper);
